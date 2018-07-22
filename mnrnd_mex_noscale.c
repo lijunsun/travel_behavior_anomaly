@@ -19,6 +19,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
         xxx += inprob[i];
     }
     uf = rand() * xxx / (double)RAND_MAX;
+    
 	for (i=0; i<n-1; i++)
 	{
         uf -= inprob[i];

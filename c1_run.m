@@ -4,6 +4,7 @@ data = csvread('matlab.csv',1);
 data = data+1;
 maxiter = 3000;
 data(:,2) = data(:,2)-1;
+data(:,4) = data(:,4)-1;
 
 %%
 % data: user_id, day, location, time
@@ -22,10 +23,9 @@ save('all_data.mat','temp_data','map_ind','data');
 % starting from here
 load('all_data.mat');
 train_data = temp_data(temp_data(:,1)>=1 & temp_data(:,1) <= 2000,:);
-test_data = temp_data(temp_data(:,1)>=2001 & temp_data(:,1) <= 4000,:);
+test_data = temp_data(temp_data(:,1)>=2001 & temp_data(:,1) <= 2200,:);
 test_data(:,1) = test_data(:,1)-2000;
 hist(temp_data(:,1),15000);
-
 
 train_three_week = train_data(train_data(:,2)>=1 & train_data(:,2) <= 21,:);
 train_last_week = train_data(train_data(:,2)>=22 & train_data(:,2) <= 28,:);
@@ -50,7 +50,7 @@ profile viewer;
 %% test
 % setenv('MW_MINGW64_LOC','C:\TDM-GCC-64');
 % mex mnrnd_mex.c;
-iters = 100000;
+iters = 1000000;
 z = zeros(iters,4);
 x = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1,1.2,1.3,1.4];
 y = x;
@@ -70,10 +70,8 @@ hist(z,1:length(x));
 %% test
 clc;
 plotf = 0;
-
-sp = [10,15,20,25,30,35,40];
-tp = [6,8,10,12,14];
-
+sp = [20,25,30,35,40];
+tp = [10,15,20,25];
 cases = [];
 for i = 1:length(sp)
     for j = 1:length(tp)
@@ -82,14 +80,14 @@ for i = 1:length(sp)
 end
 
 %%
-% parpool(4);
+parpool(4);
 clc;
 parfor i = 1:size(cases,1)
     s = cases(i,1);
     t = cases(i,2);
     disp([s,t]);
     m = matfile(strcat('res_2d_s',num2str(s),'_t',num2str(t),'.mat'),'writable',true);
-    [zs,zt,naz,nzws,nzwt] = gibbs_2d_tucker(train_three_week,s,t,2500,5,plotf);
+    [zs,zt,naz,nzws,nzwt] = gibbs_2d_tucker(train_three_week,s,t,500,5,plotf);
     m.zs = zs;
     m.zt = zt;
     m.naz = naz;
